@@ -1,0 +1,6 @@
+{
+  "name": "UsPlay",
+  "description": "Gamify date nights for couples with XP levels, streaks, surprise dice quests, categories, and community date ideas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
