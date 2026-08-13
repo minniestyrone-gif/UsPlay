@@ -286,18 +286,38 @@ fun ProfileScreen(
 
         // Level Milestones Progression
         item {
+            var showDetailedBreakdown by remember { mutableStateOf(false) }
+
             Column {
-                Text(
-                    text = "Couple XP Level Tiers & Milestones 👑",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = com.example.ui.theme.UsPlayTextPrimary
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Couple XP Level Tiers & Milestones 👑",
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = com.example.ui.theme.UsPlayTextPrimary
+                    )
+                    
+                    IconButton(onClick = { showDetailedBreakdown = !showDetailedBreakdown }) {
+                        Icon(
+                            imageVector = if (showDetailedBreakdown) Icons.Default.Star else Icons.Default.Star,
+                            contentDescription = "Toggle Level List",
+                            tint = UsPlayGoldXP
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(10.dp))
 
                 levelMilestones.forEach { milestone ->
-                    val isUnlocked = levelInfo.level >= milestone.first
+                    val targetLevel = milestone.first
+                    val requiredTotalXp = LevelSystem.xpRequiredForLevel(targetLevel)
+                    val isUnlocked = levelInfo.level >= targetLevel
+                    val xpNeeded = LevelSystem.xpNeededToUnlock(levelInfo.currentXp, targetLevel)
+
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -348,6 +368,13 @@ fun ProfileScreen(
                                         fontSize = 12.sp,
                                         color = if (isUnlocked) UsPlayGoldXP else UsPlayTextMuted
                                     )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = if (isUnlocked) "Requires $requiredTotalXp Total XP (Unlocked! 🎉)" else "Requires $requiredTotalXp Total XP • $xpNeeded XP needed to unlock",
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = if (isUnlocked) UsPlayRosePrimary else UsPlayGoldXP
+                                    )
                                 }
                             }
 
@@ -356,12 +383,103 @@ fun ProfileScreen(
                                 color = if (isUnlocked) UsPlayRosePrimary else Color.White.copy(alpha = 0.1f)
                             ) {
                                 Text(
-                                    text = if (isUnlocked) "UNLOCKED" else "LOCKED",
+                                    text = if (isUnlocked) "UNLOCKED" else "$xpNeeded XP NEEDED",
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
                                     fontSize = 10.sp,
                                     fontWeight = FontWeight.Bold,
                                     color = Color.White
                                 )
+                            }
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                // Toggleable detailed XP list for upcoming levels
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(18.dp),
+                    colors = CardDefaults.cardColors(containerColor = UsPlayPlumCard)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "⚡ Upcoming Levels XP Guide",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp,
+                                color = com.example.ui.theme.UsPlayTextPrimary
+                            )
+                            Button(
+                                onClick = { showDetailedBreakdown = !showDetailedBreakdown },
+                                colors = ButtonDefaults.buttonColors(containerColor = UsPlayRoseDark),
+                                shape = RoundedCornerShape(8.dp)
+                            ) {
+                                Text(
+                                    text = if (showDetailedBreakdown) "Hide List" else "Show All Levels",
+                                    fontSize = 11.sp
+                                )
+                            }
+                        }
+
+                        if (showDetailedBreakdown) {
+                            Spacer(modifier = Modifier.height(12.dp))
+                            val upcomingLevels = (1..15).toList()
+                            upcomingLevels.forEach { lvl ->
+                                val reqXp = LevelSystem.xpRequiredForLevel(lvl)
+                                val needed = LevelSystem.xpNeededToUnlock(levelInfo.currentXp, lvl)
+                                val isCurrent = levelInfo.level == lvl
+                                val isPassed = levelInfo.level > lvl
+
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 4.dp)
+                                        .background(
+                                            if (isCurrent) UsPlayGoldXP.copy(alpha = 0.15f) else Color.Transparent,
+                                            shape = RoundedCornerShape(8.dp)
+                                        )
+                                        .padding(horizontal = 8.dp, vertical = 6.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Text(
+                                            text = LevelSystem.getTierIcon(lvl),
+                                            fontSize = 16.sp
+                                        )
+                                        Spacer(modifier = Modifier.width(8.dp))
+                                        Text(
+                                            text = "Level $lvl",
+                                            fontWeight = if (isCurrent) FontWeight.ExtraBold else FontWeight.Medium,
+                                            fontSize = 13.sp,
+                                            color = if (isCurrent) UsPlayGoldXP else com.example.ui.theme.UsPlayTextPrimary
+                                        )
+                                        if (isCurrent) {
+                                            Text(
+                                                text = " (Current)",
+                                                fontSize = 11.sp,
+                                                fontWeight = FontWeight.Bold,
+                                                color = UsPlayRosePrimary
+                                            )
+                                        }
+                                    }
+
+                                    Text(
+                                        text = when {
+                                            isPassed -> "Unlocked ($reqXp XP)"
+                                            isCurrent -> "${levelInfo.xpNeededForNextLevel} XP needed for Level ${lvl + 1}"
+                                            else -> "$reqXp Total XP ($needed XP needed)"
+                                        },
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.SemiBold,
+                                        color = if (isPassed) UsPlayTextMuted else UsPlayGoldXP
+                                    )
+                                }
                             }
                         }
                     }

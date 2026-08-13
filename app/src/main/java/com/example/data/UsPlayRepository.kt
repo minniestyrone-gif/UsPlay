@@ -175,16 +175,24 @@ class UsPlayRepository(private val dao: UsPlayDao) {
         dao.insertOrUpdateProfile(updated)
     }
 
-    suspend fun performDailyCheckIn(): Boolean {
+    suspend fun performDailyCheckIn(): Pair<Boolean, String> {
         val profile = coupleProfile.firstOrNull() ?: CoupleProfile()
         val now = System.currentTimeMillis()
+        val twentyFourHoursMs = 24 * 60 * 60 * 1000L
+        val timeSinceLast = now - profile.lastCheckInDateMillis
+
+        if (profile.lastCheckInDateMillis > 0 && timeSinceLast < twentyFourHoursMs) {
+            val hoursLeft = (((twentyFourHoursMs - timeSinceLast) / (1000 * 60 * 60)) + 1).coerceAtLeast(1)
+            return Pair(false, "Already checked in today! Next check-in in ${hoursLeft}h.")
+        }
+
         val updated = profile.copy(
             streakDays = profile.streakDays + 1,
-            currentXp = profile.currentXp + 50,
+            currentXp = profile.currentXp + 5,
             lastCheckInDateMillis = now
         )
         dao.insertOrUpdateProfile(updated)
-        return true
+        return Pair(true, "Daily Check-In Complete! 🔥 +5 XP Earned!")
     }
 
     suspend fun completeDailyChallenge() {
@@ -398,12 +406,13 @@ data class LevelInfo(
 ) {
     val xpIntoCurrentLevel = currentXp - xpForCurrentLevelStart
     val xpRequiredForThisLevel = xpForNextLevel - xpForCurrentLevelStart
+    val xpNeededForNextLevel = (xpForNextLevel - currentXp).coerceAtLeast(0)
 }
 
 object LevelSystem {
     fun calculateLevel(currentXp: Int): LevelInfo {
-        // 1 Level per 100 XP
-        val rawLevel = (currentXp / 100) + 1
+        // 1 Level per 1000 XP
+        val rawLevel = (currentXp / 1000) + 1
         val level = rawLevel.coerceAtMost(100)
 
         val title = when {
@@ -411,12 +420,12 @@ object LevelSystem {
             level >= 25 -> "Level 25 — Relationship Adventurers"
             level >= 10 -> "Level 10 — Power Couple"
             level >= 5  -> "Level 5 — Getting Serious"
-            else        -> "Level 1 — First Date"
+            else        -> "Level $level — First Date"
         }
 
-        val levelStart = (level - 1) * 100
-        val levelNext = level * 100
-        val fraction = ((currentXp - levelStart).toFloat() / 100f).coerceIn(0f, 1f)
+        val levelStart = (level - 1) * 1000
+        val levelNext = level * 1000
+        val fraction = ((currentXp - levelStart).toFloat() / 1000f).coerceIn(0f, 1f)
 
         return LevelInfo(
             level = level,
@@ -426,6 +435,15 @@ object LevelSystem {
             xpForNextLevel = levelNext,
             progressFraction = fraction
         )
+    }
+
+    fun xpRequiredForLevel(targetLevel: Int): Int {
+        return (targetLevel - 1) * 1000
+    }
+
+    fun xpNeededToUnlock(currentXp: Int, targetLevel: Int): Int {
+        val required = xpRequiredForLevel(targetLevel)
+        return (required - currentXp).coerceAtLeast(0)
     }
 
     fun getTierIcon(level: Int): String {

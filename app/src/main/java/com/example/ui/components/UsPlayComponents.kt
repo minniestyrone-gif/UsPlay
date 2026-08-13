@@ -242,22 +242,31 @@ fun LevelProgressCard(
                 trackColor = com.example.ui.theme.UsPlayRoseLight.copy(alpha = 0.5f)
             )
 
-            Spacer(modifier = Modifier.height(6.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "${levelInfo.xpIntoCurrentLevel} / 100 XP",
+                    text = "${levelInfo.xpIntoCurrentLevel} / ${levelInfo.xpRequiredForThisLevel} XP in Level ${levelInfo.level}",
                     fontSize = 11.sp,
-                    color = UsPlayTextSecondary
+                    color = UsPlayTextSecondary,
+                    fontWeight = FontWeight.Medium
                 )
-                Text(
-                    text = "Next: Level ${levelInfo.level + 1}",
-                    fontSize = 11.sp,
-                    color = UsPlayTextMuted
-                )
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = com.example.ui.theme.UsPlayRoseLight.copy(alpha = 0.2f)
+                ) {
+                    Text(
+                        text = "Level ${levelInfo.level + 1}: ${levelInfo.xpNeededForNextLevel} XP needed",
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                        fontSize = 11.sp,
+                        color = UsPlayGoldXP,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
             }
         }
     }

@@ -269,6 +269,13 @@ fun HomeScreen(
 
         // Current Streak Card
         item {
+            val now = System.currentTimeMillis()
+            val lastCheckIn = profile?.lastCheckInDateMillis ?: 0L
+            val twentyFourHoursMs = 24 * 60 * 60 * 1000L
+            val timeSinceCheckIn = now - lastCheckIn
+            val canCheckIn = timeSinceCheckIn >= twentyFourHoursMs
+            val hoursRemaining = if (canCheckIn) 0 else (((twentyFourHoursMs - timeSinceCheckIn) / (1000 * 60 * 60)) + 1).coerceAtLeast(1)
+
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -283,7 +290,10 @@ fun HomeScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Box(
                             modifier = Modifier
                                 .size(48.dp)
@@ -308,24 +318,33 @@ fun HomeScreen(
                                 fontWeight = FontWeight.Bold,
                                 color = com.example.ui.theme.UsPlayTextPrimary
                             )
+                            Spacer(modifier = Modifier.height(2.dp))
                             Text(
-                                text = "Check in daily or restart your streak",
+                                text = if (canCheckIn) "Check in daily to earn +5 XP & grow your streak" else "Checked in! Next check-in available in ${hoursRemaining}h",
                                 fontSize = 12.sp,
-                                color = UsPlayTextMuted
+                                color = UsPlayTextMuted,
+                                lineHeight = 16.sp
                             )
                         }
                     }
 
+                    Spacer(modifier = Modifier.width(8.dp))
+
                     Button(
                         onClick = { viewModel.performDailyCheckIn() },
-                        colors = ButtonDefaults.buttonColors(containerColor = UsPlayRoseDark),
+                        enabled = canCheckIn,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = UsPlayRoseDark,
+                            disabledContainerColor = UsPlayPlumCardElevated
+                        ),
                         shape = RoundedCornerShape(12.dp),
                         modifier = Modifier.testTag("daily_checkin_button")
                     ) {
                         Text(
-                            text = "CHECK IN (+50 XP)",
+                            text = if (canCheckIn) "CHECK IN (+5 XP)" else "CHECKED IN ✓",
                             fontSize = 11.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            color = if (canCheckIn) Color.White else UsPlayTextMuted
                         )
                     }
                 }

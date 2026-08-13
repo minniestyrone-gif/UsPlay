@@ -88,8 +88,8 @@ class UsPlayViewModel(application: Application) : AndroidViewModel(application) 
 
     fun performDailyCheckIn() {
         viewModelScope.launch {
-            repository.performDailyCheckIn()
-            _userMessage.value = "Daily Streak Increased! 🔥 +50 XP Earned!"
+            val (_, msg) = repository.performDailyCheckIn()
+            _userMessage.value = msg
         }
     }
 
