@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -57,6 +58,7 @@ import com.example.ui.theme.UsPlayGoldXP
 import com.example.ui.theme.UsPlayPlumCard
 import com.example.ui.theme.UsPlayPlumCardElevated
 import com.example.ui.theme.UsPlayRoseDark
+import com.example.ui.theme.UsPlayRoseLight
 import com.example.ui.theme.UsPlayRosePrimary
 import com.example.ui.theme.UsPlayTextMuted
 import com.example.ui.theme.UsPlayTextSecondary
@@ -70,7 +72,8 @@ fun HomeScreen(
     val profile by viewModel.coupleProfile.collectAsState()
     val levelInfo by viewModel.levelInfo.collectAsState()
     val challenge by viewModel.dailyChallenge.collectAsState()
-    val missions by viewModel.weeklyMissions.collectAsState()
+    val recommendations by viewModel.coupleRecommendations.collectAsState()
+    val refreshTime by viewModel.recommendationRefreshTime.collectAsState()
     val isRolling by viewModel.isRollingDice.collectAsState()
 
     LazyColumn(
@@ -312,8 +315,9 @@ fun HomeScreen(
                         Spacer(modifier = Modifier.width(12.dp))
 
                         Column {
+                            val streak = profile?.streakDays ?: 1
                             Text(
-                                text = "${profile?.streakDays ?: 1} Day Streak! 🔥",
+                                text = "$streak ${if (streak == 1) "Day" else "Days"} Streak! 🔥",
                                 fontSize = 17.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = com.example.ui.theme.UsPlayTextPrimary
@@ -362,7 +366,7 @@ fun HomeScreen(
             )
         }
 
-        // Weekly Couples Missions
+        // 2-Day Couples Recommendations
         item {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Row(
@@ -370,83 +374,138 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "Weekly Couples Missions 🎯",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = com.example.ui.theme.UsPlayTextPrimary
-                    )
-                    Text(
-                        text = "Resets in 2d",
-                        fontSize = 12.sp,
-                        color = UsPlayTextMuted
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                            text = "Couples Recommendations ✨",
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = com.example.ui.theme.UsPlayTextPrimary
+                        )
+                    }
+                    Surface(
+                        shape = RoundedCornerShape(12.dp),
+                        color = UsPlayRoseDark.copy(alpha = 0.4f),
+                        border = androidx.compose.foundation.BorderStroke(1.dp, UsPlayRosePrimary.copy(alpha = 0.3f))
+                    ) {
+                        Text(
+                            text = refreshTime,
+                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = UsPlayRoseLight
+                        )
+                    }
                 }
 
-                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = "Fresh date recommendations curated for you every 2 days",
+                    fontSize = 12.sp,
+                    color = UsPlayTextMuted,
+                    modifier = Modifier.padding(top = 2.dp, bottom = 10.dp)
+                )
 
-                missions.forEach { mission ->
+                recommendations.forEach { rec ->
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        shape = RoundedCornerShape(14.dp),
+                            .padding(vertical = 5.dp),
+                        shape = RoundedCornerShape(16.dp),
                         colors = CardDefaults.cardColors(containerColor = UsPlayPlumCard)
                     ) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(12.dp)
+                                .padding(14.dp)
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                                ) {
+                                    Surface(
+                                        shape = RoundedCornerShape(8.dp),
+                                        color = UsPlayRoseDark.copy(alpha = 0.5f)
+                                    ) {
+                                        Text(
+                                            text = rec.category,
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = UsPlayRoseLight
+                                        )
+                                    }
+
+                                    Surface(
+                                        shape = RoundedCornerShape(8.dp),
+                                        color = Color.White.copy(alpha = 0.08f)
+                                    ) {
+                                        Text(
+                                            text = rec.tag,
+                                            modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp),
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Medium,
+                                            color = UsPlayTextSecondary
+                                        )
+                                    }
+                                }
+
                                 Text(
-                                    text = mission.title,
-                                    fontWeight = FontWeight.Bold,
-                                    fontSize = 14.sp,
-                                    color = com.example.ui.theme.UsPlayTextPrimary
-                                )
-                                Text(
-                                    text = "+${mission.xpReward} XP",
-                                    fontSize = 12.sp,
-                                    fontWeight = FontWeight.ExtraBold,
-                                    color = UsPlayGoldXP
+                                    text = "⏱️ ${rec.duration}",
+                                    fontSize = 11.sp,
+                                    color = UsPlayTextMuted,
+                                    fontWeight = FontWeight.Medium
                                 )
                             }
+
+                            Spacer(modifier = Modifier.height(8.dp))
+
+                            Text(
+                                text = rec.title,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 15.sp,
+                                color = com.example.ui.theme.UsPlayTextPrimary
+                            )
 
                             Spacer(modifier = Modifier.height(4.dp))
 
                             Text(
-                                text = mission.description,
+                                text = rec.description,
                                 fontSize = 12.sp,
-                                color = UsPlayTextSecondary
+                                color = UsPlayTextSecondary,
+                                lineHeight = 17.sp
                             )
 
-                            Spacer(modifier = Modifier.height(8.dp))
+                            Spacer(modifier = Modifier.height(10.dp))
 
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                LinearProgressIndicator(
-                                    progress = { (mission.currentProgress.toFloat() / mission.totalProgress.toFloat()).coerceIn(0f, 1f) },
-                                    modifier = Modifier
-                                        .weight(1f)
-                                        .height(8.dp)
-                                        .clip(RoundedCornerShape(4.dp)),
-                                    color = UsPlayRosePrimary,
-                                    trackColor = com.example.ui.theme.UsPlayRoseLight.copy(alpha = 0.5f)
-                                )
-                                Spacer(modifier = Modifier.width(10.dp))
                                 Text(
-                                    text = "${mission.currentProgress}/${mission.totalProgress}",
+                                    text = "📍 ${rec.location}",
                                     fontSize = 11.sp,
-                                    fontWeight = FontWeight.Bold,
                                     color = UsPlayTextMuted
                                 )
+
+                                Button(
+                                    onClick = { onNavigateToDatesTab(2) }, // Navigate to Date Planner
+                                    colors = ButtonDefaults.buttonColors(containerColor = UsPlayRoseDark),
+                                    shape = RoundedCornerShape(8.dp),
+                                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp),
+                                    modifier = Modifier.height(32.dp)
+                                ) {
+                                    Text(
+                                        text = "Plan This Date 📅",
+                                        fontSize = 11.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color.White
+                                    )
+                                }
                             }
                         }
                     }

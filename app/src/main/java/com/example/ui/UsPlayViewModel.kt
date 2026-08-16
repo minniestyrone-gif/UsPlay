@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.CommunityPost
 import com.example.data.CoupleProfile
+import com.example.data.CoupleRecommendation
 import com.example.data.DailyChallenge
 import com.example.data.DateIdea
 import com.example.data.LevelInfo
@@ -64,6 +65,17 @@ class UsPlayViewModel(application: Application) : AndroidViewModel(application) 
 
     val weeklyMissions: StateFlow<List<WeeklyMission>> = repository.weeklyMissions
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
+    private val _coupleRecommendations = MutableStateFlow<List<CoupleRecommendation>>(repository.getTwoDayRecommendations())
+    val coupleRecommendations: StateFlow<List<CoupleRecommendation>> = _coupleRecommendations.asStateFlow()
+
+    private val _recommendationRefreshTime = MutableStateFlow(repository.getTimeRemainingInTwoDayCycle())
+    val recommendationRefreshTime: StateFlow<String> = _recommendationRefreshTime.asStateFlow()
+
+    fun refreshRecommendations() {
+        _coupleRecommendations.value = repository.getTwoDayRecommendations()
+        _recommendationRefreshTime.value = repository.getTimeRemainingInTwoDayCycle()
+    }
 
     val communityPosts: StateFlow<List<CommunityPost>> = repository.communityPosts
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())

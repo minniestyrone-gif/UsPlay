@@ -154,7 +154,7 @@ fun UsPlayHeader(
                     )
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
-                        text = "$streakDays Days",
+                        text = if (streakDays == 1) "1 Day" else "$streakDays Days",
                         color = UsPlayRoseDark,
                         fontWeight = FontWeight.Bold,
                         fontSize = 14.sp

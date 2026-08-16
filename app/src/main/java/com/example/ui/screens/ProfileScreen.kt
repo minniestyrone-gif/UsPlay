@@ -249,7 +249,8 @@ fun ProfileScreen(
                         modifier = Modifier.padding(12.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-                        Text(text = "🔥 ${profile?.streakDays ?: 1} Days", fontSize = 18.sp, fontWeight = FontWeight.ExtraBold, color = com.example.ui.theme.UsPlayTextPrimary)
+                        val streak = profile?.streakDays ?: 1
+                        Text(text = "🔥 $streak ${if (streak == 1) "Day" else "Days"}", fontSize = 18.sp, fontWeight = FontWeight.ExtraBold, color = com.example.ui.theme.UsPlayTextPrimary)
                         Text(text = "Current Streak", fontSize = 11.sp, color = UsPlayTextMuted)
                     }
                 }

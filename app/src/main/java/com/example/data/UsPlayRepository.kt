@@ -27,8 +27,8 @@ class UsPlayRepository(private val dao: UsPlayDao) {
                     partner2Name = "Lerato",
                     relationshipStartDate = "Oct 14, 2023",
                     currentXp = 1250,
-                    streakDays = 6,
-                    lastCheckInDateMillis = System.currentTimeMillis() - 86400000L,
+                    streakDays = 1,
+                    lastCheckInDateMillis = 0L,
                     avatarStyle = "romantic_duo",
                     bio = "Exploring Cape Town together, one Mother City adventure at a time! 💕 Cape Town Vibe 🇿🇦",
                     isLoggedIn = true
@@ -43,13 +43,20 @@ class UsPlayRepository(private val dao: UsPlayDao) {
                     partner2Name = "Taylor",
                     relationshipStartDate = "Jan 01, 2024",
                     currentXp = 850,
-                    streakDays = 3,
-                    lastCheckInDateMillis = System.currentTimeMillis() - 86400000L,
+                    streakDays = 1,
+                    lastCheckInDateMillis = 0L,
                     avatarStyle = "adventurous_pair",
                     bio = "Sunset hunters and beach wanderers in CPT! 🌊",
                     isLoggedIn = false
                 )
             )
+        } else {
+            // Ensure any existing demo profile initialized with old template seed is reset to Day 1
+            existingProfiles.forEach { p ->
+                if ((p.id == "couple_1" || p.id == "couple_2") && (p.streakDays == 6 || p.streakDays == 3)) {
+                    dao.insertOrUpdateProfile(p.copy(streakDays = 1, lastCheckInDateMillis = 0L))
+                }
+            }
         }
 
         val existingChallenge = dailyChallenge.firstOrNull()
@@ -186,13 +193,14 @@ class UsPlayRepository(private val dao: UsPlayDao) {
             return Pair(false, "Already checked in today! Next check-in in ${hoursLeft}h.")
         }
 
+        val nextStreak = profile.streakDays.coerceAtLeast(1) + 1
         val updated = profile.copy(
-            streakDays = profile.streakDays + 1,
+            streakDays = nextStreak,
             currentXp = profile.currentXp + 5,
             lastCheckInDateMillis = now
         )
         dao.insertOrUpdateProfile(updated)
-        return Pair(true, "Daily Check-In Complete! 🔥 +5 XP Earned!")
+        return Pair(true, "Daily Check-In Complete! 🔥 Streak is now $nextStreak Days (+5 XP)!")
     }
 
     suspend fun completeDailyChallenge() {
@@ -234,6 +242,174 @@ class UsPlayRepository(private val dao: UsPlayDao) {
 
     suspend fun deletePlannedDate(id: String) {
         dao.deletePlannedDate(id)
+    }
+
+    fun getTwoDayRecommendations(): List<CoupleRecommendation> {
+        val twoDaysMillis = 2 * 24 * 60 * 60 * 1000L
+        val cycleIndex = (System.currentTimeMillis() / twoDaysMillis).toInt()
+        val sets = getCuratedRecommendationSets()
+        val selectedIndex = ((cycleIndex % sets.size) + sets.size) % sets.size
+        return sets[selectedIndex]
+    }
+
+    fun getTimeRemainingInTwoDayCycle(): String {
+        val twoDaysMillis = 2 * 24 * 60 * 60 * 1000L
+        val msIntoCycle = System.currentTimeMillis() % twoDaysMillis
+        val msRemaining = twoDaysMillis - msIntoCycle
+        val totalHours = (msRemaining / (1000 * 60 * 60)).coerceAtLeast(1)
+        val days = totalHours / 24
+        val hours = totalHours % 24
+        return if (days > 0) "New in ${days}d ${hours}h" else "New in ${hours}h"
+    }
+
+    private fun getCuratedRecommendationSets(): List<List<CoupleRecommendation>> {
+        return listOf(
+            listOf(
+                CoupleRecommendation(
+                    id = "rec1_1",
+                    title = "Kirstenbosch Tree Canopy Stroll & Sunset Picnic",
+                    description = "Walk hand-in-hand along the Boomslang canopy, listen to native birds, and lay out a blanket on the lawn for sunset with snacks and cider.",
+                    category = "❤️ Romantic",
+                    tag = "Sunset Romance",
+                    duration = "2 hrs",
+                    location = "Kirstenbosch Gardens"
+                ),
+                CoupleRecommendation(
+                    id = "rec1_2",
+                    title = "Secret Ingredient Kitchen Cook-Off",
+                    description = "Pick one surprise ingredient (like dark chocolate, chilli, or mango) and create a tapas dish together with romantic background music.",
+                    category = "🔥 Fun & Bonding",
+                    tag = "Cozy Home Quest",
+                    duration = "1.5 hrs",
+                    location = "At Home"
+                ),
+                CoupleRecommendation(
+                    id = "rec1_3",
+                    title = "Signal Hill Moonlight Stargazing & Hot Cocoa",
+                    description = "Fill a thermos with creamy hot chocolate or rooibos chai and watch the glittering Mother City lights from above.",
+                    category = "🌌 Scenic Escape",
+                    tag = "Night View",
+                    duration = "1.5 hrs",
+                    location = "Signal Hill"
+                )
+            ),
+            listOf(
+                CoupleRecommendation(
+                    id = "rec2_1",
+                    title = "Sea Point Promenade Gelato & Tandem Bicycle Ride",
+                    description = "Rent a retro bike or stroll along the Atlantic coastline while tasting artisanal Italian gelato from the promenade kiosk.",
+                    category = "🌿 Adventure",
+                    tag = "Coastal Breeze",
+                    duration = "1.5 hrs",
+                    location = "Sea Point Promenade"
+                ),
+                CoupleRecommendation(
+                    id = "rec2_2",
+                    title = "Couples Midnight Memory Box Exchange",
+                    description = "Take 30 minutes to pull up your oldest photos together, reminisce about your first date, and write a quick secret letter to open next month.",
+                    category = "❤️ Intimate",
+                    tag = "Heart Connection",
+                    duration = "1 hr",
+                    location = "Cozy Couch"
+                ),
+                CoupleRecommendation(
+                    id = "rec2_3",
+                    title = "Llandudno Secret Cove Sunset Watch",
+                    description = "Sit among the giant granite boulders as the sun sinks into the Atlantic ocean with warm blankets and acoustic tunes.",
+                    category = "✨ Romantic",
+                    tag = "Golden Hour",
+                    duration = "2 hrs",
+                    location = "Llandudno Beach"
+                )
+            ),
+            listOf(
+                CoupleRecommendation(
+                    id = "rec3_1",
+                    title = "Franschhoek Wine Tram Tasting Journey",
+                    description = "Hop on the open-air tram, sip award-winning Cap Classique wines, and enjoy an artisanal cheese board amidst rolling vineyards.",
+                    category = "🍷 Day Getaway",
+                    tag = "Valley Escape",
+                    duration = "3.5 hrs",
+                    location = "Franschhoek Valley"
+                ),
+                CoupleRecommendation(
+                    id = "rec3_2",
+                    title = "Blindfolded Sweet & Savoury Couple Taste Test",
+                    description = "Blindfold your partner and feed them 6 mystery bites (fruit, chocolate, cheese, spices) to see how many they can correctly identify!",
+                    category = "😂 Playful Game",
+                    tag = "Laughter Guaranteed",
+                    duration = "45 mins",
+                    location = "At Home"
+                ),
+                CoupleRecommendation(
+                    id = "rec3_3",
+                    title = "Kalk Bay Harbour Fish 'n Chips & Vintage Thrift Hunt",
+                    description = "Grab hot calamari & chips by the piers, watch the friendly seals play, and explore quirky antique stores along the main road.",
+                    category = "🌊 Fun Exploring",
+                    tag = "Charming Vibe",
+                    duration = "2.5 hrs",
+                    location = "Kalk Bay"
+                )
+            ),
+            listOf(
+                CoupleRecommendation(
+                    id = "rec4_1",
+                    title = "Camps Bay Sunset Cocktails & Beachfront Slow Dance",
+                    description = "Watch the pastel pink sky reflect off the waves while sharing a passionfruit mocktail or craft gin at a beachfront terrace.",
+                    category = "🔥 Flirty & Spicy",
+                    tag = "Sunset Magic",
+                    duration = "2 hrs",
+                    location = "Camps Bay Strip"
+                ),
+                CoupleRecommendation(
+                    id = "rec4_2",
+                    title = "DIY Candlelit Aromatherapy & Massage Night",
+                    description = "Dim the lights, light calming lavender or vanilla candles, put on relaxing spa jazz, and give each other a rejuvenating foot and shoulder massage.",
+                    category = "🧖 Pure Relaxation",
+                    tag = "Self Care Together",
+                    duration = "1.5 hrs",
+                    location = "At Home"
+                ),
+                CoupleRecommendation(
+                    id = "rec4_3",
+                    title = "Boulders Beach Penguin Colony Morning Walk",
+                    description = "Stroll along the wooden boardwalks among wild African penguins in Simon's Town, followed by warm artisan coffees.",
+                    category = "🌿 Nature Adventure",
+                    tag = "Cute & Memorable",
+                    duration = "2 hrs",
+                    location = "Simon's Town"
+                )
+            ),
+            listOf(
+                CoupleRecommendation(
+                    id = "rec5_1",
+                    title = "Truth Coffee Steampunk Morning & Love Note Swap",
+                    description = "Visit Cape Town's world-famous steampunk coffee emporium, enjoy velvety flat whites, and swap handwritten complimentary notes.",
+                    category = "☕ Coffee & Connection",
+                    tag = "Morning Bliss",
+                    duration = "1.5 hrs",
+                    location = "Buitenkant Street"
+                ),
+                CoupleRecommendation(
+                    id = "rec5_2",
+                    title = "Noordhoek Beach Golden Hour Horseback Ride",
+                    description = "Feel the ocean mist as gentle horses take you along miles of untouched white sands against Chapmans Peak backdrop.",
+                    category = "🐎 Bucket List",
+                    tag = "Unforgettable",
+                    duration = "2.5 hrs",
+                    location = "Noordhoek Beach"
+                ),
+                CoupleRecommendation(
+                    id = "rec5_3",
+                    title = "Popcorn & Movie Marathon in a Blanket Fort",
+                    description = "Build a cozy pillow and blanket fortress in the living room with fairy lights, your favorite childhood snacks, and a rom-com double feature.",
+                    category = "❤️ Cozy Night In",
+                    tag = "Pure Nostalgia",
+                    duration = "2.5 hrs",
+                    location = "Living Room Fort"
+                )
+            )
+        )
     }
 
     private fun getInitialDateIdeasSeed(): List<DateIdea> {

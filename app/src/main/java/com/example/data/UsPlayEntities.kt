@@ -12,7 +12,7 @@ data class CoupleProfile(
     val partner2Name: String = "Lerato",
     val relationshipStartDate: String = "Oct 14, 2023",
     val currentXp: Int = 1250,
-    val streakDays: Int = 6,
+    val streakDays: Int = 1,
     val lastCheckInDateMillis: Long = System.currentTimeMillis(),
     val avatarStyle: String = "romantic_duo",
     val bio: String = "Exploring Cape Town together, one Mother City adventure at a time! 💕 Cape Town Vibe 🇿🇦",
@@ -55,6 +55,16 @@ data class WeeklyMission(
     val currentProgress: Int,
     val totalProgress: Int,
     val isCompleted: Boolean = false
+)
+
+data class CoupleRecommendation(
+    val id: String,
+    val title: String,
+    val description: String,
+    val category: String,
+    val tag: String = "Couple Favorite",
+    val duration: String = "1-2 hrs",
+    val location: String = "Cape Town"
 )
 
 @Entity(tableName = "community_posts")
