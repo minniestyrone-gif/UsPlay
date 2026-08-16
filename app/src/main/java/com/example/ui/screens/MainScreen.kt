@@ -75,7 +75,6 @@ fun MainScreen(
     )
 
     val profile by viewModel.coupleProfile.collectAsState()
-    val isLoggedIn = profile != null && profile?.isLoggedIn == true
 
     val userMessage by viewModel.userMessage.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -87,74 +86,65 @@ fun MainScreen(
         }
     }
 
-    if (!isLoggedIn) {
-        Box(
-            modifier = modifier.fillMaxSize(),
-            contentAlignment = androidx.compose.ui.Alignment.Center
-        ) {
-            AuthScreen(viewModel = viewModel)
-        }
-    } else {
-        Scaffold(
-            modifier = modifier.fillMaxSize(),
-            containerColor = UsPlayPlumBackground,
-            snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
-            bottomBar = {
-                NavigationBar(
-                    containerColor = UsPlayPlumCardElevated,
-                    contentColor = Color.White,
-                    tonalElevation = 8.dp
-                ) {
-                    tabs.forEachIndexed { index, tab ->
-                        val isSelected = selectedTab == index
-                        NavigationBarItem(
-                            selected = isSelected,
-                            onClick = { selectedTab = index },
-                            modifier = Modifier.testTag("nav_tab_${tab.route}"),
-                            icon = {
-                                Icon(
-                                    imageVector = if (isSelected) tab.selectedIcon else tab.unselectedIcon,
-                                    contentDescription = tab.title,
-                                    tint = if (isSelected) UsPlayRosePrimary else UsPlayTextMuted
-                                )
-                            },
-                            label = {
-                                Text(
-                                    text = tab.title,
-                                    fontSize = 11.sp,
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
-                                    color = if (isSelected) UsPlayRosePrimary else UsPlayTextMuted
-                                )
-                            },
-                            colors = NavigationBarItemDefaults.colors(
-                                indicatorColor = UsPlayRoseDark.copy(alpha = 0.4f)
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        containerColor = UsPlayPlumBackground,
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
+        bottomBar = {
+            NavigationBar(
+                containerColor = UsPlayPlumCardElevated,
+                contentColor = Color.White,
+                tonalElevation = 8.dp
+            ) {
+                tabs.forEachIndexed { index, tab ->
+                    val isSelected = selectedTab == index
+                    NavigationBarItem(
+                        selected = isSelected,
+                        onClick = { selectedTab = index },
+                        modifier = Modifier.testTag("nav_tab_${tab.route}"),
+                        icon = {
+                            Icon(
+                                imageVector = if (isSelected) tab.selectedIcon else tab.unselectedIcon,
+                                contentDescription = tab.title,
+                                tint = if (isSelected) UsPlayRosePrimary else UsPlayTextMuted
                             )
+                        },
+                        label = {
+                            Text(
+                                text = tab.title,
+                                fontSize = 11.sp,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
+                                color = if (isSelected) UsPlayRosePrimary else UsPlayTextMuted
+                            )
+                        },
+                        colors = NavigationBarItemDefaults.colors(
+                            indicatorColor = UsPlayRoseDark.copy(alpha = 0.4f)
                         )
-                    }
+                    )
                 }
             }
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-                    .background(UsPlayPlumBackground)
-            ) {
-                when (selectedTab) {
-                    0 -> HomeScreen(
-                        viewModel = viewModel,
-                        onNavigateToDatesTab = { targetSubTab ->
-                            datesSubTab = targetSubTab
-                            selectedTab = 1
-                        }
-                    )
-                    1 -> DatesScreen(
-                        viewModel = viewModel,
-                        initialTab = datesSubTab
-                    )
-                    2 -> UsScreen(viewModel = viewModel)
-                    3 -> ProfileScreen(viewModel = viewModel)
-                }
+        }
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .background(UsPlayPlumBackground)
+        ) {
+            when (selectedTab) {
+                0 -> HomeScreen(
+                    viewModel = viewModel,
+                    onNavigateToDatesTab = { targetSubTab ->
+                        datesSubTab = targetSubTab
+                        selectedTab = 1
+                    }
+                )
+                1 -> DatesScreen(
+                    viewModel = viewModel,
+                    initialTab = datesSubTab
+                )
+                2 -> UsScreen(viewModel = viewModel)
+                3 -> ProfileScreen(viewModel = viewModel)
             }
         }
     }

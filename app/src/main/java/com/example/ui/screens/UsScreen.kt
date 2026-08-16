@@ -72,15 +72,6 @@ fun UsScreen(
     var newCategory by remember { mutableStateOf("❤️ Romantic") }
     var newDesc by remember { mutableStateOf("") }
 
-    val publicAchievements = remember {
-        listOf(
-            "Sipho & Lerato reached Level 10 CPT Power Couple! 👑",
-            "Liam & Chloe completed Kirstenbosch Galileo Night! 🔥",
-            "Jabu & Tash hit a 14-Day Streak in Mother City! 🔥",
-            "Keanu & Zola unlocked Legendary Cape Town Couple! 🌟"
-        )
-    }
-
     LazyColumn(
         modifier = modifier
             .fillMaxSize()
@@ -103,7 +94,7 @@ fun UsScreen(
                         color = com.example.ui.theme.UsPlayTextPrimary
                     )
                     Text(
-                        text = "Public achievements & community date ideas",
+                        text = "Community date ideas & couple memories",
                         fontSize = 12.sp,
                         color = UsPlayTextMuted
                     )
@@ -118,47 +109,6 @@ fun UsScreen(
                     Icon(imageVector = Icons.Default.Add, contentDescription = "Share")
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(text = "Share Date", fontSize = 12.sp, fontWeight = FontWeight.Bold)
-                }
-            }
-        }
-
-        // Public Achievements Ticker Carousel
-        item {
-            Column {
-                Text(
-                    text = "Public Achievements 🏆",
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = com.example.ui.theme.UsPlayTextPrimary
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-                    items(publicAchievements) { ach ->
-                        Card(
-                            shape = RoundedCornerShape(16.dp),
-                            colors = CardDefaults.cardColors(containerColor = UsPlayPlumCardElevated),
-                            border = androidx.compose.foundation.BorderStroke(1.dp, UsPlayGoldXP.copy(alpha = 0.5f))
-                        ) {
-                            Row(
-                                modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.EmojiEvents,
-                                    contentDescription = "Trophy",
-                                    tint = UsPlayGoldXP,
-                                    modifier = Modifier.size(20.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text(
-                                    text = ach,
-                                    fontSize = 13.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    color = com.example.ui.theme.UsPlayTextPrimary
-                                )
-                            }
-                        }
-                    }
                 }
             }
         }

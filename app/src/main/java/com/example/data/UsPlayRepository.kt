@@ -207,7 +207,7 @@ class UsPlayRepository(private val dao: UsPlayDao) {
         val challenge = dailyChallenge.firstOrNull() ?: return
         if (!challenge.isCompleted) {
             dao.insertOrUpdateDailyChallenge(challenge.copy(isCompleted = true))
-            addXpAndStreak(challenge.xpReward)
+            // No XP points given for completing today's quest per user request
         }
     }
 
@@ -267,146 +267,161 @@ class UsPlayRepository(private val dao: UsPlayDao) {
             listOf(
                 CoupleRecommendation(
                     id = "rec1_1",
-                    title = "Kirstenbosch Tree Canopy Stroll & Sunset Picnic",
-                    description = "Walk hand-in-hand along the Boomslang canopy, listen to native birds, and lay out a blanket on the lawn for sunset with snacks and cider.",
+                    title = "Signal Hill Sunset Golden Hour & DIY Picnic",
+                    description = "Pack a blanket and homemade snacks from your kitchen to watch the sun melt into the Atlantic with spectacular panoramic views.",
                     category = "❤️ Romantic",
-                    tag = "Sunset Romance",
+                    tag = "100% Free Suggestion",
                     duration = "2 hrs",
-                    location = "Kirstenbosch Gardens"
+                    location = "Signal Hill",
+                    cost = "Free"
                 ),
                 CoupleRecommendation(
                     id = "rec1_2",
                     title = "Secret Ingredient Kitchen Cook-Off",
-                    description = "Pick one surprise ingredient (like dark chocolate, chilli, or mango) and create a tapas dish together with romantic background music.",
+                    description = "Pick one surprise pantry ingredient and cook a creative dish together using only what you already have at home with romantic background music.",
                     category = "🔥 Fun & Bonding",
-                    tag = "Cozy Home Quest",
+                    tag = "Free at Home",
                     duration = "1.5 hrs",
-                    location = "At Home"
+                    location = "At Home",
+                    cost = "Free"
                 ),
                 CoupleRecommendation(
                     id = "rec1_3",
-                    title = "Signal Hill Moonlight Stargazing & Hot Cocoa",
-                    description = "Fill a thermos with creamy hot chocolate or rooibos chai and watch the glittering Mother City lights from above.",
+                    title = "Sea Point Promenade Moonlight Stargazing Stroll",
+                    description = "Stroll along the paved seaside promenade under the stars, listen to crashing waves, and share meaningful conversation.",
                     category = "🌌 Scenic Escape",
-                    tag = "Night View",
+                    tag = "100% Free Suggestion",
                     duration = "1.5 hrs",
-                    location = "Signal Hill"
+                    location = "Sea Point Promenade",
+                    cost = "Free"
                 )
             ),
             listOf(
                 CoupleRecommendation(
                     id = "rec2_1",
-                    title = "Sea Point Promenade Gelato & Tandem Bicycle Ride",
-                    description = "Rent a retro bike or stroll along the Atlantic coastline while tasting artisanal Italian gelato from the promenade kiosk.",
-                    category = "🌿 Adventure",
-                    tag = "Coastal Breeze",
-                    duration = "1.5 hrs",
-                    location = "Sea Point Promenade"
+                    title = "Llandudno Beach Granite Boulders Sunset Lounge",
+                    description = "Sit among the iconic smooth boulders, feel the cool sea breeze, and watch the pastel skies together with cozy jackets.",
+                    category = "✨ Romantic",
+                    tag = "100% Free Suggestion",
+                    duration = "2 hrs",
+                    location = "Llandudno Beach",
+                    cost = "Free"
                 ),
                 CoupleRecommendation(
                     id = "rec2_2",
-                    title = "Couples Midnight Memory Box Exchange",
-                    description = "Take 30 minutes to pull up your oldest photos together, reminisce about your first date, and write a quick secret letter to open next month.",
+                    title = "Couples Midnight Memory Box & Old Photos Nostalgia",
+                    description = "Pull up your earliest phone photos together, reminisce about your very first date, and write a secret cute letter to open next month.",
                     category = "❤️ Intimate",
-                    tag = "Heart Connection",
+                    tag = "Free at Home",
                     duration = "1 hr",
-                    location = "Cozy Couch"
+                    location = "Cozy Couch",
+                    cost = "Free"
                 ),
                 CoupleRecommendation(
                     id = "rec2_3",
-                    title = "Llandudno Secret Cove Sunset Watch",
-                    description = "Sit among the giant granite boulders as the sun sinks into the Atlantic ocean with warm blankets and acoustic tunes.",
-                    category = "✨ Romantic",
-                    tag = "Golden Hour",
+                    title = "Kalk Bay Harbour Seal Watching & Quirky Stroll",
+                    description = "Walk along the harbour piers to watch playful wild seals dive and splash, followed by browsing vintage antique window displays.",
+                    category = "🌊 Fun Exploring",
+                    tag = "100% Free Suggestion",
                     duration = "2 hrs",
-                    location = "Llandudno Beach"
+                    location = "Kalk Bay Harbour",
+                    cost = "Free"
                 )
             ),
             listOf(
                 CoupleRecommendation(
                     id = "rec3_1",
-                    title = "Franschhoek Wine Tram Tasting Journey",
-                    description = "Hop on the open-air tram, sip award-winning Cap Classique wines, and enjoy an artisanal cheese board amidst rolling vineyards.",
-                    category = "🍷 Day Getaway",
-                    tag = "Valley Escape",
-                    duration = "3.5 hrs",
-                    location = "Franschhoek Valley"
+                    title = "Clifton 4th Beach Sandcastle Duel & Footprint Walk",
+                    description = "Take off your shoes, walk along the powdery white sands, and build a silly couples sand sculpture together.",
+                    category = "🌿 Adventure",
+                    tag = "100% Free Suggestion",
+                    duration = "2 hrs",
+                    location = "Clifton 4th Beach",
+                    cost = "Free"
                 ),
                 CoupleRecommendation(
                     id = "rec3_2",
-                    title = "Blindfolded Sweet & Savoury Couple Taste Test",
-                    description = "Blindfold your partner and feed them 6 mystery bites (fruit, chocolate, cheese, spices) to see how many they can correctly identify!",
+                    title = "Blindfolded Sweet & Savoury Kitchen Taste Test",
+                    description = "Blindfold your partner and feed them 6 mystery bites from your fridge (fruit, cinnamon, peanut butter, citrus) to see how many they guess!",
                     category = "😂 Playful Game",
-                    tag = "Laughter Guaranteed",
+                    tag = "Free at Home",
                     duration = "45 mins",
-                    location = "At Home"
+                    location = "Kitchen Island",
+                    cost = "Free"
                 ),
                 CoupleRecommendation(
                     id = "rec3_3",
-                    title = "Kalk Bay Harbour Fish 'n Chips & Vintage Thrift Hunt",
-                    description = "Grab hot calamari & chips by the piers, watch the friendly seals play, and explore quirky antique stores along the main road.",
-                    category = "🌊 Fun Exploring",
-                    tag = "Charming Vibe",
-                    duration = "2.5 hrs",
-                    location = "Kalk Bay"
+                    title = "Bo-Kaap Colourful Streets Photo Walk",
+                    description = "Explore the vibrant historic cobbled streets together and take cute candid couple photos against the bright pastel houses.",
+                    category = "📸 Creative",
+                    tag = "100% Free Suggestion",
+                    duration = "1.5 hrs",
+                    location = "Bo-Kaap Quarter",
+                    cost = "Free"
                 )
             ),
             listOf(
                 CoupleRecommendation(
                     id = "rec4_1",
-                    title = "Camps Bay Sunset Cocktails & Beachfront Slow Dance",
-                    description = "Watch the pastel pink sky reflect off the waves while sharing a passionfruit mocktail or craft gin at a beachfront terrace.",
+                    title = "Camps Bay Tidal Pool Splash & Beachfront Slow Dance",
+                    description = "Dip your toes in the natural ocean tidal pool during golden hour and slow dance together with your phone playing your couple song.",
                     category = "🔥 Flirty & Spicy",
-                    tag = "Sunset Magic",
-                    duration = "2 hrs",
-                    location = "Camps Bay Strip"
+                    tag = "100% Free Suggestion",
+                    duration = "1.5 hrs",
+                    location = "Camps Bay Tidal Pool",
+                    cost = "Free"
                 ),
                 CoupleRecommendation(
                     id = "rec4_2",
                     title = "DIY Candlelit Aromatherapy & Massage Night",
-                    description = "Dim the lights, light calming lavender or vanilla candles, put on relaxing spa jazz, and give each other a rejuvenating foot and shoulder massage.",
+                    description = "Dim the lights, light soothing candles, put on relaxing spa acoustics, and give each other a rejuvenating foot and shoulder massage.",
                     category = "🧖 Pure Relaxation",
-                    tag = "Self Care Together",
+                    tag = "Free at Home",
                     duration = "1.5 hrs",
-                    location = "At Home"
+                    location = "Living Room",
+                    cost = "Free"
                 ),
                 CoupleRecommendation(
                     id = "rec4_3",
-                    title = "Boulders Beach Penguin Colony Morning Walk",
-                    description = "Stroll along the wooden boardwalks among wild African penguins in Simon's Town, followed by warm artisan coffees.",
-                    category = "🌿 Nature Adventure",
-                    tag = "Cute & Memorable",
-                    duration = "2 hrs",
-                    location = "Simon's Town"
+                    title = "Muizenberg Beach Boardwalk Sunset Stroll",
+                    description = "Admire the world-famous colourful Victorian bathing boxes and watch the surfers catching twilight waves.",
+                    category = "🌅 Scenic Walk",
+                    tag = "100% Free Suggestion",
+                    duration = "1.5 hrs",
+                    location = "Muizenberg Beach",
+                    cost = "Free"
                 )
             ),
             listOf(
                 CoupleRecommendation(
                     id = "rec5_1",
-                    title = "Truth Coffee Steampunk Morning & Love Note Swap",
-                    description = "Visit Cape Town's world-famous steampunk coffee emporium, enjoy velvety flat whites, and swap handwritten complimentary notes.",
-                    category = "☕ Coffee & Connection",
-                    tag = "Morning Bliss",
-                    duration = "1.5 hrs",
-                    location = "Buitenkant Street"
+                    title = "Living Room Blanket Fort & Rom-Com Movie Night",
+                    description = "Build a cozy fortress out of cushions and blankets, string fairy lights, pop homegrown popcorn, and binge your favorite romance movies.",
+                    category = "❤️ Cozy Night In",
+                    tag = "Free at Home",
+                    duration = "2.5 hrs",
+                    location = "Living Room Fort",
+                    cost = "Free"
                 ),
                 CoupleRecommendation(
                     id = "rec5_2",
-                    title = "Noordhoek Beach Golden Hour Horseback Ride",
-                    description = "Feel the ocean mist as gentle horses take you along miles of untouched white sands against Chapmans Peak backdrop.",
-                    category = "🐎 Bucket List",
-                    tag = "Unforgettable",
-                    duration = "2.5 hrs",
-                    location = "Noordhoek Beach"
+                    title = "Secret Couple Love Letter & Complimentary Note Swap",
+                    description = "Sit back-to-back for 15 minutes writing 10 things you genuinely love and appreciate about each other, then read them aloud.",
+                    category = "💌 Heartfelt",
+                    tag = "Free at Home",
+                    duration = "1 hr",
+                    location = "Balcony / Garden",
+                    cost = "Free"
                 ),
                 CoupleRecommendation(
                     id = "rec5_3",
-                    title = "Popcorn & Movie Marathon in a Blanket Fort",
-                    description = "Build a cozy pillow and blanket fortress in the living room with fairy lights, your favorite childhood snacks, and a rom-com double feature.",
-                    category = "❤️ Cozy Night In",
-                    tag = "Pure Nostalgia",
-                    duration = "2.5 hrs",
-                    location = "Living Room Fort"
+                    title = "Bloubergstrand Iconic Table Mountain Sunset View",
+                    description = "Enjoy the most famous postcard view of Table Mountain across Table Bay with the evening glow illuminating the sea.",
+                    category = "📸 Scenic Wonder",
+                    tag = "100% Free Suggestion",
+                    duration = "2 hrs",
+                    location = "Blouberg Beach",
+                    cost = "Free"
                 )
             )
         )

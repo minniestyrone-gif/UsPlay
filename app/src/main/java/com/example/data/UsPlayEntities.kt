@@ -64,7 +64,8 @@ data class CoupleRecommendation(
     val category: String,
     val tag: String = "Couple Favorite",
     val duration: String = "1-2 hrs",
-    val location: String = "Cape Town"
+    val location: String = "Cape Town",
+    val cost: String = "Free"
 )
 
 @Entity(tableName = "community_posts")

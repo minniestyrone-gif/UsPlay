@@ -108,7 +108,7 @@ class UsPlayViewModel(application: Application) : AndroidViewModel(application) 
     fun completeDailyChallenge() {
         viewModelScope.launch {
             repository.completeDailyChallenge()
-            _userMessage.value = "Today's Challenge Completed! 🎉 +150 XP!"
+            _userMessage.value = "Today's Quest Completed! 💕"
         }
     }
 

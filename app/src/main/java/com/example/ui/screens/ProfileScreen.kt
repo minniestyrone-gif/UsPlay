@@ -77,6 +77,15 @@ fun ProfileScreen(
     var annivDate by remember { mutableStateOf(profile?.relationshipStartDate ?: "Oct 14, 2023") }
     var coupleBio by remember { mutableStateOf(profile?.bio ?: "Exploring Cape Town together, one Mother City adventure at a time! 💕 Cape Town Vibe 🇿🇦") }
 
+    androidx.compose.runtime.LaunchedEffect(profile) {
+        profile?.let {
+            p1Name = it.partner1Name
+            p2Name = it.partner2Name
+            annivDate = it.relationshipStartDate
+            coupleBio = it.bio
+        }
+    }
+
     val levelMilestones = remember {
         listOf(
             Triple(1, "Level 1 — First Date", "Starting your journey together! 🌱"),
@@ -488,38 +497,8 @@ fun ProfileScreen(
             }
         }
 
-        // Account & Security Card (Logout)
+        // Couple Profile Settings Card
         item {
-            var showLogoutDialog by remember { mutableStateOf(false) }
-
-            if (showLogoutDialog) {
-                androidx.compose.material3.AlertDialog(
-                    onDismissRequest = { showLogoutDialog = false },
-                    title = { Text(text = "Log Out of UsPlay?", color = Color.White, fontWeight = FontWeight.Bold) },
-                    text = { Text(text = "Are you sure you want to log out of your couple account (${profile?.partner1Name} & ${profile?.partner2Name})?", color = UsPlayTextMuted) },
-                    confirmButton = {
-                        Button(
-                            onClick = {
-                                showLogoutDialog = false
-                                viewModel.logout()
-                            },
-                            colors = ButtonDefaults.buttonColors(containerColor = UsPlayRosePrimary)
-                        ) {
-                            Text("Log Out", color = Color.White, fontWeight = FontWeight.Bold)
-                        }
-                    },
-                    dismissButton = {
-                        androidx.compose.material3.TextButton(
-                            onClick = { showLogoutDialog = false }
-                        ) {
-                            Text("Cancel", color = UsPlayTextMuted)
-                        }
-                    },
-                    containerColor = UsPlayPlumCardElevated,
-                    shape = RoundedCornerShape(20.dp)
-                )
-            }
-
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(18.dp),
@@ -532,7 +511,7 @@ fun ProfileScreen(
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     Text(
-                        text = "Account & Security 🔒",
+                        text = "Couple Settings 💕",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White
@@ -545,25 +524,27 @@ fun ProfileScreen(
                     ) {
                         Column {
                             Text(
-                                text = "Signed in as",
+                                text = "Profile Details",
                                 fontSize = 11.sp,
                                 color = UsPlayTextMuted
                             )
                             Text(
-                                text = profile?.email ?: "sipho.lerato@usplay.com",
-                                fontSize = 14.sp,
+                                text = "${profile?.partner1Name} & ${profile?.partner2Name} • ${profile?.relationshipStartDate}",
+                                fontSize = 13.sp,
                                 fontWeight = FontWeight.SemiBold,
                                 color = Color.White
                             )
                         }
 
                         Button(
-                            onClick = { showLogoutDialog = true },
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFD32F2F)),
+                            onClick = { showEditProfileDialog = true },
+                            colors = ButtonDefaults.buttonColors(containerColor = UsPlayRoseDark),
                             shape = RoundedCornerShape(12.dp),
-                            modifier = Modifier.testTag("logout_btn")
+                            modifier = Modifier.testTag("edit_details_btn")
                         ) {
-                            Text(text = "Log Out", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 13.sp)
+                            Icon(imageVector = Icons.Default.Edit, contentDescription = "Edit", modifier = Modifier.size(14.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = "Edit", fontWeight = FontWeight.Bold, color = Color.White, fontSize = 12.sp)
                         }
                     }
                 }

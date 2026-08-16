@@ -187,14 +187,15 @@ fun HomeScreen(
 
                             Surface(
                                 shape = RoundedCornerShape(12.dp),
-                                color = UsPlayGoldXP
+                                color = UsPlayRoseDark.copy(alpha = 0.5f),
+                                border = androidx.compose.foundation.BorderStroke(1.dp, UsPlayRosePrimary.copy(alpha = 0.4f))
                             ) {
                                 Text(
-                                    text = "+${currChallenge.xpReward} XP",
+                                    text = "✨ Free Daily Activity",
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-                                    fontSize = 12.sp,
+                                    fontSize = 11.sp,
                                     fontWeight = FontWeight.Bold,
-                                    color = Color.Black
+                                    color = UsPlayRoseLight
                                 )
                             }
                         }
@@ -241,7 +242,7 @@ fun HomeScreen(
                                     )
                                     Spacer(modifier = Modifier.width(6.dp))
                                     Text(
-                                        text = "Today's Quest Claimed! (+${currChallenge.xpReward} XP)",
+                                        text = "Today's Quest Completed! 💕",
                                         fontSize = 13.sp,
                                         color = Color(0xFF81C784),
                                         fontWeight = FontWeight.Bold
@@ -259,7 +260,7 @@ fun HomeScreen(
                                     .testTag("complete_todays_challenge_button")
                             ) {
                                 Text(
-                                    text = "COMPLETE TODAY'S QUEST (+${currChallenge.xpReward} XP)",
+                                    text = "COMPLETE TODAY'S QUEST",
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 13.sp
                                 )
@@ -398,7 +399,7 @@ fun HomeScreen(
                 }
 
                 Text(
-                    text = "Fresh date recommendations curated for you every 2 days",
+                    text = "Fresh 100% free date recommendations curated for you every 2 days",
                     fontSize = 12.sp,
                     color = UsPlayTextMuted,
                     modifier = Modifier.padding(top = 2.dp, bottom = 10.dp)
@@ -426,6 +427,20 @@ fun HomeScreen(
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                                 ) {
+                                    Surface(
+                                        shape = RoundedCornerShape(8.dp),
+                                        color = Color(0xFF2E7D32).copy(alpha = 0.35f),
+                                        border = androidx.compose.foundation.BorderStroke(1.dp, Color(0xFF4CAF50).copy(alpha = 0.5f))
+                                    ) {
+                                        Text(
+                                            text = "💚 ${rec.cost}",
+                                            modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp),
+                                            fontSize = 11.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color(0xFF81C784)
+                                        )
+                                    }
+
                                     Surface(
                                         shape = RoundedCornerShape(8.dp),
                                         color = UsPlayRoseDark.copy(alpha = 0.5f)
